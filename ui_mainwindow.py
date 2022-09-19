@@ -26,7 +26,11 @@ from transforms import *
 from ui_newobject import *
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def newObject(self, MainWindow):
+            dialog = NewObject()
+            dialog.show()   
+
+    def setupUi(self, MainWindow): 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(810, 646)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -106,10 +110,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        
-        def newObject(self, MainWindow):
-            dialog = NewObject()
-            dialog.show()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
