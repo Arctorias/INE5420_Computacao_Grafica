@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
         self.functionsGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.functionsGroupBox.setGeometry(QtCore.QRect(0, 0, 211, 601))
         self.functionsGroupBox.setObjectName("functionsGroupBox")
-        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox)
+        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox) # adicionar funcionalidade de selcionar obejto
         self.objectsListView.setGeometry(QtCore.QRect(10, 50, 181, 121))
         self.objectsListView.setObjectName("objectsListView")
         self.objectsLabel = QtWidgets.QLabel(self.functionsGroupBox)
@@ -73,12 +73,12 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.groupBox_2)
         self.label_3.setGeometry(QtCore.QRect(120, 35, 21, 21))
         self.label_3.setObjectName("label_3")
-        self.transformObjectButton = QtWidgets.QPushButton(self.functionsGroupBox)
+        self.transformObjectButton = QtWidgets.QPushButton(self.functionsGroupBox) # adicionar função que abre a janela de transformação
         self.transformObjectButton.setGeometry(QtCore.QRect(110, 180, 81, 25))
         self.transformObjectButton.setObjectName("transformObjectButton")
         self.newObjectButton = QtWidgets.QPushButton(self.functionsGroupBox)
         self.newObjectButton.setGeometry(QtCore.QRect(10, 180, 91, 25))
-        self.newObjectButton.setObjectName("newObjectButton")
+        self.newObjectButton.setObjectName("newObjectButton") # adicionar função que abre janela para criar novo objeto
         self.viewportGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.viewportGroupBox.setGeometry(QtCore.QRect(220, 10, 581, 481))
         self.viewportGroupBox.setObjectName("viewportGroupBox")
@@ -171,7 +171,7 @@ class MainWindow(QMainWindow):
         #p2 = Point(40, 40)
         #draw_point(self.ui.scene, p1)
         #draw_line(self.ui.scene, p1, p2)
-        self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects)))
+        #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects)))
         #draw_objects(self.ui.scene, self.list_objects)
         #draw_wireframe(self.ui.scene, self.quad)
 
