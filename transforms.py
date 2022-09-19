@@ -1,5 +1,11 @@
+from typing import List
 from structs import *
 from math import sin, cos
+
+def viewport_transformation(point: Point, window_size: List[float]) -> Point:
+    x = (point.x - window_size[0]) / (window_size[2] - window_size[0]) * (570 - 0)
+    y = (1 - ((point.y - window_size[1]) / (window_size[3] - window_size[1]))) * (420 - 0)
+    return Point(x, y)
 
 def find_center(obj):
     cx = 0
