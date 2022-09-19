@@ -9,6 +9,7 @@
 
 
 from fnmatch import translate
+from typing import List
 from PyQt5 import QtCore, QtGui, QtWidgets
 from cProfile import label
 import sys
@@ -32,7 +33,7 @@ class Ui_MainWindow(object):
         self.functionsGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.functionsGroupBox.setGeometry(QtCore.QRect(0, 0, 211, 601))
         self.functionsGroupBox.setObjectName("functionsGroupBox")
-        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox) # adicionar funcionalidade de selcionar obejto
+        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox)
         self.objectsListView.setGeometry(QtCore.QRect(10, 50, 181, 121))
         self.objectsListView.setObjectName("objectsListView")
         self.objectsLabel = QtWidgets.QLabel(self.functionsGroupBox)
@@ -73,20 +74,20 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.groupBox_2)
         self.label_3.setGeometry(QtCore.QRect(120, 35, 21, 21))
         self.label_3.setObjectName("label_3")
-        self.transformObjectButton = QtWidgets.QPushButton(self.functionsGroupBox) # adicionar função que abre a janela de transformação
+        self.transformObjectButton = QtWidgets.QPushButton(self.functionsGroupBox)
         self.transformObjectButton.setGeometry(QtCore.QRect(110, 180, 81, 25))
         self.transformObjectButton.setObjectName("transformObjectButton")
         self.newObjectButton = QtWidgets.QPushButton(self.functionsGroupBox)
         self.newObjectButton.setGeometry(QtCore.QRect(10, 180, 91, 25))
-        self.newObjectButton.setObjectName("newObjectButton") # adicionar função que abre janela para criar novo objeto
+        self.newObjectButton.setObjectName("newObjectButton")
         self.viewportGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.viewportGroupBox.setGeometry(QtCore.QRect(220, 10, 581, 481))
         self.viewportGroupBox.setObjectName("viewportGroupBox")
         self.graphicsView = QtWidgets.QGraphicsView(self.viewportGroupBox)
-        self.graphicsView.setGeometry(QtCore.QRect(5, 31, 571, 441))
+        self.graphicsView.setGeometry(QtCore.QRect(5, 31, 573, 423))
         self.graphicsView.setObjectName("graphicsView")
 
-        self.scene = QGraphicsScene(0, 0, 571, 441)
+        self.scene = QGraphicsScene(0, 0, 570, 420)
         
         self.messagesTextBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.messagesTextBrowser.setGeometry(QtCore.QRect(220, 500, 581, 101))
@@ -129,21 +130,30 @@ class Ui_MainWindow(object):
 class MainWindow(QMainWindow):
     def __init__(self):
 
+        win_size = []
+        win_size.append(0)
+        win_size.append(0)
+        win_size.append(800)
+        win_size.append(600)
+
+
+
+
         self.list_objects = []
-        self.p1 = Point(20, 20)
-        self.p2 = Point(40, 40)
+        self.p1 = Point(0, 0)
+        self.p2 = Point(220, 80)
         self.p3 = Point(60, 300)
         self.line1 = Line(self.p1, self.p2)
 
-        self.list_objects.append(self.p1)
-        self.list_objects.append(self.p2)
+        #self.list_objects.append(self.p1)
+        #self.list_objects.append(self.p2)
         self.list_objects.append(self.line1)
         self.list_objects.append(self.p3)
 
-        self.pa = Point(200, 300)
-        self.pb = Point(200, 350)
-        self.pc = Point(250, 350)
-        self.pd = Point(250, 300)
+        self.pa = Point(200, 0)
+        self.pb = Point(200, 50)
+        self.pc = Point(250, 50)
+        self.pd = Point(250, 0)
         self.quad = Wireframe()
         self.quad.add_ponto(self.pa)
         self.quad.add_ponto(self.pb)
@@ -164,17 +174,18 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #self.quad = translation(self.quad, -100, 0)
-        #self.quad = rotation(self.quad, -0.415926)
+        #self.quad = translation(self.quad, 300, 0)
+        #self.quad = rotation(self.quad, (1.2708))
         #self.quad = self_rotation(self.quad, 2.1415926)
-        #p1 = Point(20, 20)
-        #p2 = Point(40, 40)
+        p1 = Point(0, 0)
+        p2 = Point(250, 200)
         #draw_point(self.ui.scene, p1)
-        #draw_line(self.ui.scene, p1, p2)
+        #draw_line(self.ui.scene, p1, p2, win_size)
         #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects)))
-        #draw_objects(self.ui.scene, self.list_objects)
-        #draw_wireframe(self.ui.scene, self.quad)
-
+        draw_objects(self.ui.scene, self.list_objects, win_size)
+        #draw_wireframe(self.ui.scene, self.quad, win_size)
+    
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)    
