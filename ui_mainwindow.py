@@ -23,6 +23,7 @@ from canvas_draw import *
 from structs import *
 from transforms import *
 
+from ui_newobject import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -86,6 +87,8 @@ class Ui_MainWindow(object):
         self.graphicsView = QtWidgets.QGraphicsView(self.viewportGroupBox)
         self.graphicsView.setGeometry(QtCore.QRect(5, 31, 573, 423))
         self.graphicsView.setObjectName("graphicsView")
+        
+        self.newObjectButton.clicked.connect(lambda: self.newObject(MainWindow))
 
         self.scene = QGraphicsScene(0, 0, 570, 420)
         
@@ -103,6 +106,10 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        def newObject(self, MainWindow):
+			dialog = NewObject()
+			dialog.show()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -184,7 +191,12 @@ class MainWindow(QMainWindow):
         #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects, win_size)))
         draw_objects(self.ui.scene, self.list_objects, win_size)
         #draw_wireframe(self.ui.scene, self.quad, win_size)
-    
+
+class NewObject(QDialog):
+    def init(self):
+        super(QDialog, self).init()
+        self.ui = Ui_NewObject()
+        self.ui.setupUi(self)
     
 
 if __name__ == "__main__":
