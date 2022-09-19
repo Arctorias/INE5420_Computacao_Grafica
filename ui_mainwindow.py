@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
         p2 = Point(250, 200)
         #draw_point(self.ui.scene, p1)
         #draw_line(self.ui.scene, p1, p2, win_size)
-        #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects)))
+        #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects, win_size)))
         draw_objects(self.ui.scene, self.list_objects, win_size)
         #draw_wireframe(self.ui.scene, self.quad, win_size)
     
