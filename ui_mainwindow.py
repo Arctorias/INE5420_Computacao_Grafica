@@ -108,8 +108,8 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
         def newObject(self, MainWindow):
-			dialog = NewObject()
-			dialog.show()
+            dialog = NewObject()
+            dialog.show()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
