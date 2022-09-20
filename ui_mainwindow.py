@@ -25,10 +25,14 @@ from transforms import *
 
 from ui_newobject import *
 
+objectList = []
+
 class Ui_MainWindow(object):
     def newObject(self, MainWindow):
             dialog = NewObject()
-            dialog.exec()   
+            dialog.exec()
+            print(objectList)
+            self.objectsListWidget.addItem(objectList[-1][0])
 
     def setupUi(self, MainWindow): 
         MainWindow.setObjectName("MainWindow")
@@ -38,9 +42,9 @@ class Ui_MainWindow(object):
         self.functionsGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.functionsGroupBox.setGeometry(QtCore.QRect(0, 0, 211, 601))
         self.functionsGroupBox.setObjectName("functionsGroupBox")
-        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox)
-        self.objectsListView.setGeometry(QtCore.QRect(10, 50, 181, 121))
-        self.objectsListView.setObjectName("objectsListView")
+        self.objectsListWidget = QtWidgets.QListWidget(self.functionsGroupBox)
+        self.objectsListWidget.setGeometry(QtCore.QRect(10, 50, 181, 121))
+        self.objectsListWidget.setObjectName("objectsListWidget")
         self.objectsLabel = QtWidgets.QLabel(self.functionsGroupBox)
         self.objectsLabel.setGeometry(QtCore.QRect(10, 30, 67, 17))
         self.objectsLabel.setObjectName("objectsLabel")
@@ -193,10 +197,56 @@ class MainWindow(QMainWindow):
         #draw_wireframe(self.ui.scene, self.quad, win_size)
 
 class NewObject(QDialog):
-    def __init__(self parent=None):
-        super(QDialog, self).__init__(parent)
+    def __init__(self):
+        super(QDialog, self).__init__()
         self.ui = Ui_NewObject()
         self.ui.setupUi(self)
+        self.ui.addPointButton.clicked.connect(self.addWireframePoint)
+    
+    def accept(self):
+        if (self.ui.nameEdit.text() == ""):
+            QMessageBox.about(self, "Error", "Define the object name!")
+            return
+        if (self.ui.tabWidget.currentIndex() == 0):
+            #Point
+            if (self.ui.xpointEdit.text() == "" or self.ui.ypointEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the point correctly!")
+                return
+            point = Point(int(self.ui.xpointEdit.text()), int(self.ui.ypointEdit.text()))
+            print(point.x.__str__() + ", " + point.y.__str__())
+            objectList.append((self.ui.nameEdit.text(),point))
+        elif (self.ui.tabWidget.currentIndex() == 1):
+            #Line
+            if (self.ui.x1lineEdit.text() == "" or self.ui.y1lineEdit.text() == "" or
+                self.ui.x2lineEdit.text() == "" or self.ui.y2lineEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the line correctly")
+                return
+            pi = Point(int(self.ui.x1lineEdit.text()), int(self.ui.y1lineEdit.text()))
+            pf = Point(int(self.ui.x2lineEdit.text()), int(self.ui.y2lineEdit.text()))
+            line = Line(pi, pf)
+            objectList.append((self.ui.nameEdit.text(),line))
+        else:
+            #Wireframe
+            wireframe = Wireframe()
+            for i in range(self.ui.pointListWidget.count()):
+                print(self.ui.pointListWidget.item(i).text())
+                p = Point(self.ui.pointListWidget.item(i).text()[1:self.ui.pointListWidget.item(i).text().index(",")],
+                self.ui.pointListWidget.item(i).text()[self.ui.pointListWidget.item(i).text().index(",")+1:self.ui.pointListWidget.item(i).text().__len__()-1])
+                print(str(p.x) + ", " + str(p.y))
+                wireframe.add_ponto(p)
+            objectList.append((self.ui.nameEdit.text(),wireframe))
+        
+        return super().accept()
+
+    def reject(self) -> None:
+        return super().reject()
+
+    def addWireframePoint(self):
+        if (self.ui.x1wireframeEdit.text() == "" or self.ui.y1wireframeEdit.text() == ""):
+            QMessageBox.about(self, "Error", "Define the point correctly")
+            return
+        self.ui.pointListWidget.addItem("("+self.ui.x1wireframeEdit.text() +","+self.ui.y1wireframeEdit.text()+")")
+
     
 
 if __name__ == "__main__":
