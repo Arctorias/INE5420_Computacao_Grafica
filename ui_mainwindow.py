@@ -28,7 +28,7 @@ from ui_newobject import *
 class Ui_MainWindow(object):
     def newObject(self, MainWindow):
             dialog = NewObject()
-            dialog.show()   
+            dialog.exec()   
 
     def setupUi(self, MainWindow): 
         MainWindow.setObjectName("MainWindow")
@@ -193,8 +193,8 @@ class MainWindow(QMainWindow):
         #draw_wireframe(self.ui.scene, self.quad, win_size)
 
 class NewObject(QDialog):
-    def init(self):
-        super(QDialog, self).init()
+    def __init__(self parent=None):
+        super(QDialog, self).__init__(parent)
         self.ui = Ui_NewObject()
         self.ui.setupUi(self)
     
