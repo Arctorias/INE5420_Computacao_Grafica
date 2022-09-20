@@ -32,9 +32,12 @@ class Ui_MainWindow(object):
             dialog = NewObject()
             dialog.exec()
             print(objectList)
-            self.objectsListWidget.addItem(objectList[-1][0])
+            if (self.objectsListWidget.count() != len(objectList)):
+                self.objectsListWidget.addItem(objectList[-1][0])
+            MainWindow.updateViewport()
+            
 
-    def setupUi(self, MainWindow): 
+    def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(810, 646)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -140,15 +143,11 @@ class Ui_MainWindow(object):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-
-        win_size = []
-        win_size.append(0)
-        win_size.append(0)
-        win_size.append(800)
-        win_size.append(600)
-
-
-
+        self.win_size = []
+        self.win_size.append(0)
+        self.win_size.append(0)
+        self.win_size.append(800)
+        self.win_size.append(600)
 
         self.list_objects = []
         self.p1 = Point(0, 0)
@@ -193,8 +192,12 @@ class MainWindow(QMainWindow):
         #draw_point(self.ui.scene, p1)
         #draw_line(self.ui.scene, p1, p2, win_size)
         #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects, win_size)))
-        draw_objects(self.ui.scene, self.list_objects, win_size)
+        #draw_objects(self.ui.scene, self.list_objects, win_size)
         #draw_wireframe(self.ui.scene, self.quad, win_size)
+
+    def updateViewport(self):
+        self.ui.scene.clear()
+        draw_objects(self.ui.scene, objectList, self.win_size)
 
 class NewObject(QDialog):
     def __init__(self):
@@ -230,8 +233,8 @@ class NewObject(QDialog):
             wireframe = Wireframe()
             for i in range(self.ui.pointListWidget.count()):
                 print(self.ui.pointListWidget.item(i).text())
-                p = Point(self.ui.pointListWidget.item(i).text()[1:self.ui.pointListWidget.item(i).text().index(",")],
-                self.ui.pointListWidget.item(i).text()[self.ui.pointListWidget.item(i).text().index(",")+1:self.ui.pointListWidget.item(i).text().__len__()-1])
+                p = Point(int(self.ui.pointListWidget.item(i).text()[1:self.ui.pointListWidget.item(i).text().index(",")]),
+                int(self.ui.pointListWidget.item(i).text()[self.ui.pointListWidget.item(i).text().index(",")+1:self.ui.pointListWidget.item(i).text().__len__()-1]))
                 print(str(p.x) + ", " + str(p.y))
                 wireframe.add_ponto(p)
             objectList.append((self.ui.nameEdit.text(),wireframe))
