@@ -25,6 +25,7 @@ from structs import *
 from transforms import *
 
 from ui_newobject import *
+from ui_transformobject import *
 
 objectList = []
 

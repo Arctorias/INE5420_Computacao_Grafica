@@ -51,7 +51,7 @@ def draw_wireframe(scene, wireframe, window_size):
 
 def draw_objects(scene, objs, window_size):
     pen = QtGui.QPen()
-    pen.setWidth(2)
+    pen.setWidth(3)
     for i in range(0, len(objs)):
 
         if(isinstance(objs[i][1], Wireframe)):
