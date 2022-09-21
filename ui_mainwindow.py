@@ -9,6 +9,7 @@
 
 
 from fnmatch import translate
+from re import S
 from typing import List
 from PyQt5 import QtCore, QtGui, QtWidgets
 from cProfile import label
@@ -143,6 +144,7 @@ class Ui_MainWindow(object):
 
 class MainWindow(QMainWindow):
     def __init__(self):
+        self.step = 5
         self.win_size = []
         self.win_size.append(0)
         self.win_size.append(0)
@@ -192,12 +194,57 @@ class MainWindow(QMainWindow):
         #draw_point(self.ui.scene, p1)
         #draw_line(self.ui.scene, p1, p2, win_size)
         #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects, win_size)))
+        self.ui.upButton.clicked.connect(self.upButton)
+        self.ui.downButton.clicked.connect(self.downButton)
+        self.ui.leftButton.clicked.connect(self.leftButton)
+        self.ui.rightButton.clicked.connect(self.rightButton)
+        self.ui.inButton.clicked.connect(self.zoomIn)
+        self.ui.outButton.clicked.connect(self.zoomOut)
+        self.ui.stepEdit.setText("10")
         #draw_objects(self.ui.scene, self.list_objects, win_size)
         #draw_wireframe(self.ui.scene, self.quad, win_size)
-
+    
     def updateViewport(self):
         self.ui.scene.clear()
         draw_objects(self.ui.scene, objectList, self.win_size)
+
+    def upButton(self):
+        self.win_size[1] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[3] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def downButton(self):
+        self.win_size[1] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[3] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def leftButton(self):
+        self.win_size[0] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[2] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def rightButton(self):
+        self.win_size[0] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[2] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def zoomIn(self):
+        xdiff = ((self.win_size[2] - self.win_size[0])*int(self.ui.stepEdit.text())/100)/2
+        ydiff = ((self.win_size[3] - self.win_size[1])*int(self.ui.stepEdit.text())/100)/2
+        self.win_size[0] += xdiff
+        self.win_size[2] -= xdiff
+        self.win_size[1] += ydiff
+        self.win_size[3] -= ydiff
+        self.updateViewport()
+
+    def zoomOut(self):
+        xdiff = ((self.win_size[2] - self.win_size[0])*int(self.ui.stepEdit.text())/100)/2
+        ydiff = ((self.win_size[3] - self.win_size[1])*int(self.ui.stepEdit.text())/100)/2
+        self.win_size[0] -= xdiff
+        self.win_size[2] += xdiff
+        self.win_size[1] -= ydiff
+        self.win_size[3] += ydiff
+        self.updateViewport()
 
 class NewObject(QDialog):
     def __init__(self):
