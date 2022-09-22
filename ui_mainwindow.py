@@ -37,7 +37,10 @@ class Ui_MainWindow(object):
             if (self.objectsListWidget.count() != len(objectList)):
                 self.objectsListWidget.addItem(objectList[-1][0])
             MainWindow.updateViewport()
-            
+
+    def transformObject(self, MainWindow):
+        dialog = TransformObject()
+        dialog.exec()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -102,6 +105,7 @@ class Ui_MainWindow(object):
         self.graphicsView.setObjectName("graphicsView")
         
         self.newObjectButton.clicked.connect(lambda: self.newObject(MainWindow))
+        self.transformObjectButton.clicked.connect(lambda: self.transformObject(MainWindow))
 
         self.scene = QGraphicsScene(0, 0, 570, 420)
         
@@ -298,7 +302,17 @@ class NewObject(QDialog):
             return
         self.ui.pointListWidget.addItem("("+self.ui.x1wireframeEdit.text() +","+self.ui.y1wireframeEdit.text()+")")
 
-    
+class TransformObject(QDialog):
+    def __init__(self):
+        super(QDialog, self).__init__()
+        self.ui = Ui_TransformObject()
+        self.ui.setupUi(self)
+
+    def accept(self):
+        return super().accept()
+
+    def reject(self) -> None:
+        return super().reject()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)    
