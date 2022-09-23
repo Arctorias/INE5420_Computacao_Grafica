@@ -51,14 +51,14 @@ def draw_wireframe(scene, wireframe, window_size):
 
 def draw_objects(scene, objs, window_size):
     pen = QtGui.QPen()
-    pen.setWidth(2)
+    pen.setWidth(3)
     for i in range(0, len(objs)):
 
-        if(isinstance(objs[i], Wireframe)):
+        if(isinstance(objs[i][1], Wireframe)):
             
             wireframe_vp = Wireframe()
-            for j in range(0, len(objs[i].pontos)):
-                p = objs[i].pontos[j]
+            for j in range(0, len(objs[i][1].pontos)):
+                p = objs[i][1].pontos[j]
                 p = viewport_transformation(p, window_size)
                 wireframe_vp.add_ponto(p)
 
@@ -69,17 +69,17 @@ def draw_objects(scene, objs, window_size):
                 else:
                     scene.addLine(wireframe_vp.pontos[j - 1].x,wireframe_vp.pontos[j - 1].y,wireframe_vp.pontos[j].x,wireframe_vp.pontos[j].y, pen)
         
-        if(isinstance(objs[i], Line)):
+        if(isinstance(objs[i][1], Line)):
             
-            pi = Point(objs[i].xi, objs[i].yi)
-            pf = Point(objs[i].xf, objs[i].yf)
+            pi = Point(objs[i][1].xi, objs[i][1].yi)
+            pf = Point(objs[i][1].xf, objs[i][1].yf)
             pi_vp = viewport_transformation(pi, window_size)
             pf_vp = viewport_transformation(pf, window_size)
 
     
             scene.addLine(pi_vp.x,pi_vp.y,pf_vp.x,pf_vp.y, pen)        
     
-        if(isinstance(objs[i], Point)):
-            p_vp = viewport_transformation(objs[i], window_size)
+        if(isinstance(objs[i][1], Point)):
+            p_vp = viewport_transformation(objs[i][1], window_size)
             scene.addLine(p_vp.x, p_vp.y, p_vp.x, p_vp.y, pen)
     scene.update()
