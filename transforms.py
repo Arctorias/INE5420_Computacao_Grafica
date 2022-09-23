@@ -1,8 +1,8 @@
 from typing import List
 from structs import *
-from math import sin, cos
+from math import sin, cos, degrees, radians
 
-def viewport_transformation(point: Point, window_size: List[float]) -> Point:
+def viewport_transformation(point: Point, window_size: List[float]) -> Point:    
     x = (point.x - window_size[0]) / (window_size[2] - window_size[0]) * (570 - 0)
     y = (1 - ((point.y - window_size[1]) / (window_size[3] - window_size[1]))) * (420 - 0)
     return Point(x, y)
@@ -58,6 +58,7 @@ def translation(obj, dx, dy):
         return p
 
 def rotation(obj, ang):
+    ang = radians(ang)
     if(isinstance(obj, Wireframe)):
         new_obj = Wireframe()
         for i in range(0,len(obj.pontos)):
@@ -91,6 +92,8 @@ def scaling(obj, sx, sy):
     if(isinstance(obj, Wireframe)):
         new_obj = Wireframe()
         for i in range(0,len(obj.pontos)):
+            
+            
             x = obj.pontos[i].x * sx + obj.pontos[i].y * 0 + obj.pontos[i].z * 0
             y = obj.pontos[i].x * 0 + obj.pontos[i].y * sy + obj.pontos[i].z * 0
             z = obj.pontos[i].x * 0 + obj.pontos[i].y * 0 + obj.pontos[i].z * 1
@@ -99,7 +102,7 @@ def scaling(obj, sx, sy):
         return new_obj
     
     if(isinstance(obj, Line)):
-        xi = obj.xi * sx + obj.yi * 0 + obj.zi * 0
+        xi = obj.xi * sx #+ obj.yi * 0 + obj.zi * 0
         xf = obj.xf * sx + obj.yf * 0 + obj.zf * 0
         yi = obj.xi * 0 + obj.yi * sy + obj.zi * 0
         yf = obj.xf * 0 + obj.yf * sy + obj.zf * 0
@@ -126,11 +129,17 @@ def self_rotation(obj, ang):
     return obj
 
 def rotation_around_point(obj, ang, p):
-    obj = translation(obj, p.x, p.y)
+    obj = translation(obj,-p.x, -p.y)
     obj = rotation(obj, ang)
-    obj = translation(obj, -p.x, -p.y)
+    obj = translation(obj, p.x, p.y)
     return obj
-    
+
+def scale(obj, sx, sy):
+    cx , cy = find_center(obj)
+    obj = translation(obj, -cx,-cy)
+    obj = scaling(obj,sx,sy)
+    obj = translation(obj,cx,cy)
+    return obj    
     
         
 
