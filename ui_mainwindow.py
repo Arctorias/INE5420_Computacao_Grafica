@@ -9,6 +9,7 @@
 
 
 from fnmatch import translate
+from re import S
 from typing import List
 from PyQt5 import QtCore, QtGui, QtWidgets
 from cProfile import label
@@ -23,8 +24,42 @@ from canvas_draw import *
 from structs import *
 from transforms import *
 
+from ui_newobject import *
+from ui_transformobject import *
+from ui_transformobject import *
+
+objectList = []
 
 class Ui_MainWindow(object):
+    def newObject(self, MainWindow):
+            dialog = NewObject()
+            dialog.exec()
+            print(objectList)
+            if (self.objectsListWidget.count() != len(objectList)):
+                self.objectsListWidget.addItem(objectList[-1][0])
+            MainWindow.updateViewport()
+
+    
+    def TrasnformObject(self, MainWindow):
+
+        if( self.objectsListWidget.currentItem() is None):
+            pass
+
+        else:
+            
+            obj = self.objectsListWidget.currentItem().text()
+            for i in range(len(objectList)):
+                if(objectList[i][0] == obj):
+                    dialog = TransformObject(i)
+                    #print(objectList[i][0])
+                    #print(objectList[i][1])
+                    dialog.exec()
+                    MainWindow.updateViewport()
+
+            
+
+            
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(810, 646)
@@ -33,9 +68,9 @@ class Ui_MainWindow(object):
         self.functionsGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.functionsGroupBox.setGeometry(QtCore.QRect(0, 0, 211, 601))
         self.functionsGroupBox.setObjectName("functionsGroupBox")
-        self.objectsListView = QtWidgets.QListView(self.functionsGroupBox)
-        self.objectsListView.setGeometry(QtCore.QRect(10, 50, 181, 121))
-        self.objectsListView.setObjectName("objectsListView")
+        self.objectsListWidget = QtWidgets.QListWidget(self.functionsGroupBox)
+        self.objectsListWidget.setGeometry(QtCore.QRect(10, 50, 181, 121))
+        self.objectsListWidget.setObjectName("objectsListWidget")
         self.objectsLabel = QtWidgets.QLabel(self.functionsGroupBox)
         self.objectsLabel.setGeometry(QtCore.QRect(10, 30, 67, 17))
         self.objectsLabel.setObjectName("objectsLabel")
@@ -86,6 +121,8 @@ class Ui_MainWindow(object):
         self.graphicsView = QtWidgets.QGraphicsView(self.viewportGroupBox)
         self.graphicsView.setGeometry(QtCore.QRect(5, 31, 573, 423))
         self.graphicsView.setObjectName("graphicsView")
+        
+        self.newObjectButton.clicked.connect(lambda: self.newObject(MainWindow))
 
         self.scene = QGraphicsScene(0, 0, 570, 420)
         
@@ -129,15 +166,12 @@ class Ui_MainWindow(object):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-
-        win_size = []
-        win_size.append(0)
-        win_size.append(0)
-        win_size.append(800)
-        win_size.append(600)
-
-
-
+        self.step = 5
+        self.win_size = []
+        self.win_size.append(000)
+        self.win_size.append(000)
+        self.win_size.append(800)
+        self.win_size.append(600)
 
         self.list_objects = []
         self.p1 = Point(0, 0)
@@ -182,11 +216,186 @@ class MainWindow(QMainWindow):
         #draw_point(self.ui.scene, p1)
         #draw_line(self.ui.scene, p1, p2, win_size)
         #self.ui.upButton.clicked.connect(lambda: (draw_objects(self.ui.scene, self.list_objects, win_size)))
-        draw_objects(self.ui.scene, self.list_objects, win_size)
+        self.ui.upButton.clicked.connect(self.upButton)
+        self.ui.downButton.clicked.connect(self.downButton)
+        self.ui.leftButton.clicked.connect(self.leftButton)
+        self.ui.rightButton.clicked.connect(self.rightButton)
+        self.ui.inButton.clicked.connect(self.zoomIn)
+        self.ui.outButton.clicked.connect(self.zoomOut)
+        self.ui.stepEdit.setText("10")
+        self.ui.transformObjectButton.clicked.connect(lambda: self.ui.TrasnformObject(self))
+        #draw_objects(self.ui.scene, self.list_objects, win_size)
         #draw_wireframe(self.ui.scene, self.quad, win_size)
     
-    
+    def updateViewport(self):
+        self.ui.scene.clear()
+        draw_objects(self.ui.scene, objectList, self.win_size)
 
+    def upButton(self):
+        self.win_size[1] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[3] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def downButton(self):
+        self.win_size[1] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[3] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def leftButton(self):
+        self.win_size[0] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[2] -= self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def rightButton(self):
+        self.win_size[0] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.win_size[2] += self.step*(int(self.ui.stepEdit.text())/10)
+        self.updateViewport()
+    
+    def zoomIn(self):
+        
+        xdiff = ((self.win_size[2] - self.win_size[0])*int(self.ui.stepEdit.text())/100)/2
+        ydiff = ((self.win_size[3] - self.win_size[1])*int(self.ui.stepEdit.text())/100)/2
+        
+        self.win_size[0] += xdiff
+        self.win_size[2] -= xdiff
+        self.win_size[1] += ydiff
+        self.win_size[3] -= ydiff
+        print(self.win_size[0])
+        print(self.win_size[2])
+        self.updateViewport()
+
+    def zoomOut(self):
+        xdiff = ((self.win_size[2] - self.win_size[0])*int(self.ui.stepEdit.text())/100)/2
+        ydiff = ((self.win_size[3] - self.win_size[1])*int(self.ui.stepEdit.text())/100)/2
+        self.win_size[0] -= xdiff
+        self.win_size[2] += xdiff
+        self.win_size[1] -= ydiff
+        self.win_size[3] += ydiff
+        self.updateViewport()
+
+class NewObject(QDialog):
+    def __init__(self):
+        super(QDialog, self).__init__()
+        self.ui = Ui_NewObject()
+        self.ui.setupUi(self)
+        self.ui.addPointButton.clicked.connect(self.addWireframePoint)
+    
+    def accept(self):
+        if (self.ui.nameEdit.text() == ""):
+            QMessageBox.about(self, "Error", "Define the object name!")
+            return
+        if (self.ui.tabWidget.currentIndex() == 0):
+            #Point
+            if (self.ui.xpointEdit.text() == "" or self.ui.ypointEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the point correctly!")
+                return
+            point = Point(int(self.ui.xpointEdit.text()), int(self.ui.ypointEdit.text()))
+            print(point.x.__str__() + ", " + point.y.__str__())
+            objectList.append((self.ui.nameEdit.text(),point))
+        elif (self.ui.tabWidget.currentIndex() == 1):
+            #Line
+            if (self.ui.x1lineEdit.text() == "" or self.ui.y1lineEdit.text() == "" or
+                self.ui.x2lineEdit.text() == "" or self.ui.y2lineEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the line correctly")
+                return
+            pi = Point(int(self.ui.x1lineEdit.text()), int(self.ui.y1lineEdit.text()))
+            pf = Point(int(self.ui.x2lineEdit.text()), int(self.ui.y2lineEdit.text()))
+            line = Line(pi, pf)
+            objectList.append((self.ui.nameEdit.text(),line))
+        else:
+            #Wireframe
+            wireframe = Wireframe()
+            for i in range(self.ui.pointListWidget.count()):
+                print(self.ui.pointListWidget.item(i).text())
+                p = Point(int(self.ui.pointListWidget.item(i).text()[1:self.ui.pointListWidget.item(i).text().index(",")]),
+                int(self.ui.pointListWidget.item(i).text()[self.ui.pointListWidget.item(i).text().index(",")+1:self.ui.pointListWidget.item(i).text().__len__()-1]))
+                print(str(p.x) + ", " + str(p.y))
+                wireframe.add_ponto(p)
+            objectList.append((self.ui.nameEdit.text(),wireframe))
+        
+        return super().accept()
+
+    def reject(self) -> None:
+        return super().reject()
+
+    def addWireframePoint(self):
+        if (self.ui.x1wireframeEdit.text() == "" or self.ui.y1wireframeEdit.text() == ""):
+            QMessageBox.about(self, "Error", "Define the point correctly")
+            return
+        self.ui.pointListWidget.addItem("("+self.ui.x1wireframeEdit.text() +","+self.ui.y1wireframeEdit.text()+")")
+
+class TransformObject(QDialog):
+    
+    def __init__(self, i):
+        super(QDialog, self).__init__()
+        self.ui = Ui_TransformObject()
+        self.ui.setupUi(self)
+        self.indice = i
+        self.ui.nameEdit.setText(objectList[i][0])
+        
+        
+
+    def accept(self):
+        if (self.ui.tabWidget.currentIndex() == 0):
+            #rotate origin
+            if (self.ui.angleOriginEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the angle correctly!")
+                return
+            obj_t = rotation(objectList[self.indice][1], float(self.ui.angleOriginEdit.text()))
+            n = objectList[self.indice][0]
+            objectList[self.indice] = (n , obj_t)
+
+        if (self.ui.tabWidget.currentIndex() == 1):
+            #rotate self
+            if (self.ui.angleSelfEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the angle correctly!")
+                return
+            obj_t = self_rotation(objectList[self.indice][1], float(self.ui.angleSelfEdit.text()))
+            n = objectList[self.indice][0]
+            objectList[self.indice] = (n , obj_t)
+
+        if (self.ui.tabWidget.currentIndex() == 2):
+            #rotate around point
+            if (self.ui.angleSelfEdit_2.text() == "" or self.ui.xrotateEdit.text() == "" or self.ui.yrotateEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the parameters correctly!")
+                return
+            
+            px = int(self.ui.xrotateEdit.text())
+            py = int(self.ui.yrotateEdit.text())
+            p = Point(px, py)
+            obj_t = rotation_around_point(objectList[self.indice][1], float(self.ui.angleSelfEdit_2.text()), p)
+            n = objectList[self.indice][0]
+            objectList[self.indice] = (n , obj_t)
+        
+        if (self.ui.tabWidget.currentIndex() == 3):
+            #scale
+            if (self.ui.xscaleEdit.text() == "" or self.ui.yscaleEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the parameters correctly!")
+                return
+            
+            sx = float(self.ui.xscaleEdit.text())
+            sy = float(self.ui.yscaleEdit.text())
+            obj_t = scale(objectList[self.indice][1], sx, sy)
+            n = objectList[self.indice][0]
+            objectList[self.indice] = (n , obj_t)
+
+        if (self.ui.tabWidget.currentIndex() == 4):
+            #translate
+            if (self.ui.xtranslationEdit.text() == "" or self.ui.ytranslationEdit.text() == ""):
+                QMessageBox.about(self, "Error", "Define the parameters correctly!")
+                return
+            
+            dx = int(self.ui.xtranslationEdit.text())
+            dy = int(self.ui.ytranslationEdit.text())
+            obj_t = translation(objectList[self.indice][1], dx, dy)
+            n = objectList[self.indice][0]
+            objectList[self.indice] = (n , obj_t)
+        
+        return super().accept()
+
+
+
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)    
 
